@@ -4,6 +4,7 @@ import rospy
 from Adafruit_MotorHAT import Adafruit_MotorHAT, Adafruit_DCMotor
 import tf.transformations
 from geometry_msgs.msg import Twist
+from math import pi
 
 
 # create a default object, no changes to I2C address or frequency
@@ -20,14 +21,19 @@ def turnOffMotors():
 #atexit.register(turnOffMotors)
 
 leftMotor = mh.getMotor(1)
+leftFrontMotor = mh.getMotor(3)
 rightMotor = mh.getMotor(2)
+rightFrontMotor = mh.getMotor(4)
 
 leftMotor.run(Adafruit_MotorHAT.RELEASE)
+leftFrontMotor.run(Adafruit_MotorHAT.RELEASE)
 rightMotor.run(Adafruit_MotorHAT.RELEASE)
+rightFrontMotor.run(Adafruit_MotorHAT.RELEASE)
 
 leftMotorSpeed = 0
 rightMotorSpeed = 0
 width_robot = 0.1
+scaleFactor = 0.5
 
 
 def stopMotors(leftMS, rightMS):
@@ -37,11 +43,11 @@ def stopMotors(leftMS, rightMS):
         rightMS = i
         leftMotor.setSpeed(leftMS)
         rightMotor.setSpeed(rightMS)
+	leftFrontMotor.setSpeed(leftMS)
+        rightFrontMotor.setSpeed(rightMS)
 
 
 def callback(data):
-    print(data)
-
     twist_aux = data
     vel_x = twist_aux.linear.x
     vel_th = twist_aux.angular.z
@@ -50,34 +56,48 @@ def callback(data):
     th = 0.0
     right_vel = 0.0
     left_vel = 0.0
+    PI = pi
 
     if vel_x == 0:
-        right_vel = vel_th * width_robot / 2.0
-        left_vel = (-1) * right_vel
+        right_vel = -vel_th / PI
+        left_vel = 0
     elif vel_th == 0:
         left_vel = right_vel = vel_x
     else:
-        left_vel = vel_x - vel_th * width_robot / 2.0
-        right_vel = vel_x + vel_th * width_robot / 2.0
+        left_vel = vel_x * (1 + vel_th / PI * 2.0)
+        right_vel = vel_x * (1 - vel_th / PI * 2.0)
 
-    speedFactor = 300
-    left_vel *= speedFactor
-    right_vel *= speedFactor
+#    if left_vel > 0:
+#        left_vel = left_vel * (1 - scaleFactor) + scaleFactor
+#    else:
+#        left_vel = left_vel * (1 - scaleFactor) - scaleFactor
 
-    print(left_vel)
-    print(right_vel)
+#    if right_vel > 0:
+#        right_vel = right_vel * (1 - scaleFactor) + scaleFactor
+#    else:
+#        right_vel = right_vel * (1 - scaleFactor) - scaleFactor
+
+    maxPowerFactor = 1.0
+    left_vel *= 255 * maxPowerFactor
+    right_vel *= 255 * maxPowerFactor
 
     leftMotor.setSpeed(abs(int(left_vel)))
+    leftFrontMotor.setSpeed(abs(int(left_vel)))
     rightMotor.setSpeed(abs(int(right_vel)))
+    rightFrontMotor.setSpeed(abs(int(right_vel)))
 
     if left_vel > 0:
         leftMotor.run(Adafruit_MotorHAT.FORWARD)
+        leftFrontMotor.run(Adafruit_MotorHAT.FORWARD)
     else:
         leftMotor.run(Adafruit_MotorHAT.BACKWARD)
+        leftFrontMotor.run(Adafruit_MotorHAT.BACKWARD)
     if right_vel > 0:
         rightMotor.run(Adafruit_MotorHAT.FORWARD)
+        rightFrontMotor.run(Adafruit_MotorHAT.FORWARD)
     else:
         rightMotor.run(Adafruit_MotorHAT.BACKWARD)
+        rightFrontMotor.run(Adafruit_MotorHAT.BACKWARD)
 
 
 def subscriber():

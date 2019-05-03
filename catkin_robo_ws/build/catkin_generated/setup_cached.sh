@@ -8,9 +8,7 @@
 
 # modified environment variables
 export CMAKE_PREFIX_PATH="/home/pi/catkin_py/catkin_robo_ws/devel:$CMAKE_PREFIX_PATH"
-export LD_LIBRARY_PATH="/home/pi/catkin_py/catkin_robo_ws/devel/lib:$LD_LIBRARY_PATH"
-export PKG_CONFIG_PATH="/home/pi/catkin_py/catkin_robo_ws/devel/lib/pkgconfig:$PKG_CONFIG_PATH"
+export PATH="/opt/ros/kinetic/bin:/home/pi/bin:/home/pi/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
 export PWD="/home/pi/catkin_py/catkin_robo_ws/build"
-export PYTHONPATH="/home/pi/catkin_py/catkin_robo_ws/devel/lib/python2.7/dist-packages:$PYTHONPATH"
 export ROSLISP_PACKAGE_DIRECTORIES="/home/pi/catkin_py/catkin_robo_ws/devel/share/common-lisp"
 export ROS_PACKAGE_PATH="/home/pi/catkin_py/catkin_robo_ws/src:$ROS_PACKAGE_PATH"
