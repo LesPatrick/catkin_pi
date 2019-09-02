@@ -1,5 +1,5 @@
-export ROS_MASTER_URI=http://192.168.0.213:11311
-export ROS_IP=192.168.0.66
+export ROS_MASTER_URI=http://10.14.90.89:11311
+export ROS_IP=10.14.90.88
 
 source catkin_robo_ws/devel/setup.bash
 
